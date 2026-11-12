@@ -285,18 +285,18 @@ textarea { width: 100%; margin-top: .3rem; background: var(--panel-2); color: va
       title: 'Card B', sub: 'Parts 5 and 6: the action and the result', cls: 'b',
       parts: [
         { n: 5, name: 'The action', dates: [
-          ['Oct 1908', 'The WSPU asked the public to “rush” Parliament. The leaders were arrested the day before. About <b>60,000</b> people came, <b>5,000</b> police blocked them, <b>37</b> were arrested. <span class="nb">(Not the peaceful June rally.)</span>'],
+          ['Oct 1908', 'The WSPU asked the public to “rush” Parliament. The three WSPU leaders were arrested just before it began. About <b>60,000</b> people came, <b>5,000</b> police blocked them, <b>37</b> were arrested. <span class="nb">(Not the peaceful June rally.)</span>'],
           ['1909', 'First hunger strike in prison. Force-feeding began that autumn.'],
           ['18 Nov 1910', '<b>“Black Friday”.</b> <b>300</b> women marched on Parliament. Police and bystanders attacked them; over <b>100</b> were arrested.'],
-          ['Mar 1912', 'First mass <b>window-smashing</b> in London’s West End: <b>150+</b> women.'],
-          ['1913', '<b>Arson and bombs</b> aimed at buildings, many empty. In February a house being built for the minister <b>Lloyd George</b> was bombed.'],
+          ['Mar 1912', 'Window-breaking began in 1908. Now came <b>mass window-smashing</b> in London’s West End: <b>150+</b> women.'],
+          ['1912–13', '<b>Arson and bombs</b> aimed at buildings, many empty. In February a house being built for the minister <b>Lloyd George</b> was bombed.'],
           ['4 Jun 1913', '<b>Emily Davison</b> ran onto the Derby track and was hit by the King’s horse. She died on <b>8 June</b>. Why she did it is still debated: she carried two WSPU flags and a return ticket.'],
-          ['Aug 1914', 'War began. The WSPU stopped its campaign and prisoners were freed. Over <b>1,000</b> suffragettes had been jailed.']
+          ['Aug 1914', 'War began. The WSPU stopped its campaign and prisoners were freed. About <b>1,000</b> suffragettes had been jailed.']
         ] },
         { n: 6, name: 'The result', items: [
           '<b>1914:</b> no woman could vote for Parliament.',
           '<b>1918:</b> <b>8.4 million</b> women won the vote, but only if over <b>30</b> and they (or their husbands) rented or owned property above a set value, or were university graduates. All men over 21 could vote.',
-          '<b>1928:</b> all women over <b>21</b>, on the same terms as men. About <b>15 million</b> women voters.',
+          '<b>1928:</b> all women over <b>21</b>, on the same terms as men. By 1929, about <b>15 million</b> women voters.',
           'Emmeline Pankhurst died on <b>14 June 1928</b>, weeks before the law passed.'
         ] }
       ],
@@ -350,7 +350,7 @@ textarea { width: 100%; margin-top: .3rem; background: var(--panel-2); color: va
       figureSvg() + (noLegend ? '' : '<div class="legend">' + LEGEND + '</div>') + '</div>';
   }
   function photoFig(forPrint) {
-    return '<figure class="fig"><img src="' + IMG.hyde + '" alt="Black and white photograph: women at the front of a large procession, wearing sashes and carrying flowers and banners. Emmeline Pankhurst is on the left and Elizabeth Wolstenholme Elmy is the older woman in the centre.">' +
+    return '<figure class="fig"><img src="' + IMG.hyde + '" alt="Black and white photograph: women at the front of a large procession, wearing sashes and carrying flowers and banners. The women in the front rows smile at the camera.">' +
       '<figcaption><b>Image 1.</b> Women’s Sunday, Hyde Park, <b>21 June 1908</b>. Seven processions, about <b>30,000</b> women marching, and a far bigger crowd watching (estimates reach hundreds of thousands). Legal and peaceful. Colours: purple, white and green.</figcaption>' +
       '<span class="credit">Photograph from Sylvia Pankhurst, The Suffragette (1911). Public domain.</span></figure>';
   }
@@ -390,12 +390,12 @@ textarea { width: 100%; margin-top: .3rem; background: var(--panel-2); color: va
   function speakScreen(role, key) {
     var other = role === 'A' ? 'B' : 'A';
     return '<div class="panel split-img">' + (role === 'A' ? photoFig() : figureBox(true, true)) +
-      '<div class="tile"><h3>Cover these</h3><ul class="checklist">' + PARTS[role].map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div></div>' +
+      '<div class="tile"><h3>Tick as you cover each one</h3>' + ticklist('sp' + key, PARTS[role]) + '</div></div>' +
       '<p class="hint soft">Speak from your keyword card, not from this screen. ' + other + ' is listening and will ask you one question.</p>';
   }
   function listenScreen(role, key) {
     var other = role === 'A' ? 'B' : 'A';
-    return '<div class="panel split-img">' + (other === 'A' ? photoFig() : figureBox(true, true)) +
+    return '<div class="panel split-img"><div class="tile"><h3>Listen</h3><p>Your partner will describe ' + (other === 'A' ? 'their image' : 'their images') + '. You cannot see ' + (other === 'A' ? 'it' : 'them') + '. Listen, then ask.</p></div>' +
       '<div class="tile"><h3>Tick each part you hear</h3>' + ticklist(key, PARTS[other]) + qbox(key) + '</div></div>';
   }
   var SCREENS = [
@@ -427,7 +427,7 @@ textarea { width: 100%; margin-top: .3rem; background: var(--panel-2); color: va
     { stage: 4, part: 'Part 1: Look at the source', secs: 120,
       instr: function () { return 'A newspaper printed this the day after Black Friday. Read it like a historian.'; },
       panel: function () {
-        return '<div class="panel split-img"><figure class="fig"><img style="max-height:50vh;width:auto;max-width:100%;margin:0 auto" src="' + IMG.mirror + '" alt="Front page of the Daily Mirror, Saturday 19 November 1910. One large photograph shows a woman lying on the ground in a street while several police officers stand over her. The headline says violent scenes at Westminster where many suffragettes were arrested while trying to force their way into the House of Commons.">' +
+        return '<div class="panel split-img"><figure class="fig"><img style="max-height:50vh;width:auto;max-width:100%;margin:0 auto" src="' + IMG.mirror + '" alt="Front page of the Daily Mirror, Saturday 19 November 1910. One large photograph shows a woman lying on the ground in a street while other figures stand nearby. The headline says violent scenes at Westminster where many suffragettes were arrested while trying to force their way into the House of Commons.">' +
           '<span class="credit">The Daily Mirror, 19 November 1910, front page. Public domain.</span></figure>' +
           '<div class="panel"><ol class="tile q3">' +
           '<li><span>Who produced it?<em>A newspaper. Who read it? Why a photograph on the front page?</em></span></li>' +
@@ -606,6 +606,7 @@ textarea { width: 100%; margin-top: .3rem; background: var(--panel-2); color: va
   function openTeacher(from) {
     if (document.getElementById('overlay')) return;
     S.overlayFrom = from;
+    if (S.timerOn && S.running) { S.running = false; paintClock(); announce('Timer paused.'); }
     var o = document.createElement('div');
     o.id = 'overlay'; o.className = 'overlay'; o.setAttribute('role', 'dialog'); o.setAttribute('aria-modal', 'true'); o.setAttribute('aria-labelledby', 'ot');
     o.innerHTML =
@@ -616,24 +617,23 @@ textarea { width: 100%; margin-top: .3rem; background: var(--panel-2); color: va
       '<div class="tile"><h3>Without iPads</h3><p>Press Print for Card A, Card B and a listening sheet. Pairs then follow the same stages from a projected copy of this page.</p></div></div></section>' +
       '<section aria-labelledby="oh2"><h3 id="oh2" class="eyebrow">Both cards (teacher only)</h3><div class="panel cols-2" style="margin-top:.6rem">' + cardHtml('A') + cardHtml('B') + '</div></section>' +
       '<section aria-labelledby="oh3"><h3 id="oh3" class="eyebrow">Notes on the history</h3><div class="tile"><ul class="notes">' +
-      '<li><b>Two events in 1908.</b> Women’s Sunday (21 June) was a peaceful WSPU rally. The “rush” on Parliament (13 October) was a call to the public to storm the House of Commons; the three leaders were arrested the day before, so about 60,000 people (many onlookers) met 5,000 police without them. Contemporary press blamed “unemployed and hooligans” in the crowd.</li>' +
-      '<li><b>Militancy was gradual.</b> Heckling (1905), stone-throwing and window-breaking from 1908, mass window-smashing (1 March 1912), then arson and bombs from late 1912, peaking in 1913.</li>' +
+      '<li><b>Two events in 1908.</b> Women’s Sunday (21 June) was a peaceful WSPU rally. The “rush” on Parliament (13 October) was a call to the public to storm the House of Commons; the three leaders were arrested just before it began (sources differ on the exact timing), so about 60,000 people, many of them onlookers, met 5,000 police. Contemporary press blamed unemployed men and hooligans in the crowd.</li>' +
+      '<li><b>Militancy was gradual.</b> Heckling (1905), window-breaking from 30 June 1908, mass window-smashing (1 March 1912), then arson and bombs from late 1912, peaking in 1913.</li>' +
       '<li><b>Davison.</b> Historians disagree about her intentions. She had two WSPU flags and a return ticket; the inquest recorded misadventure. Card B states only what is known.</li>' +
       '<li><b>1918.</b> The Act gave the vote to women over 30 who were local-government electors, or married to one, or university graduates; about 8.4 million (some sources say 8.5). Men over 21 all got the vote. Women under 30, many working-class women, and people in the Empire stayed excluded. 1928 added about five million women.</li>' +
       '<li><b>Suffragists and suffragettes.</b> The NUWSS had about 50,000 members by 1914 (estimates range up to 100,000). WSPU membership is uncertain. The press and the women themselves used the two words loosely. “Suffragettes” was coined by the Daily Mail in January 1906.</li>' +
-      '<li><b>The Pankhursts.</b> Sylvia’s East London Federation was expelled in January 1914 and she became a socialist; Christabel and Emmeline backed the war; Adela moved to Australia in 1914. Emmeline later stood as a Conservative.</li>' +
+      '<li><b>The Pankhursts.</b> Sylvia’s East London Federation was expelled in January 1914 and she became a socialist; Christabel and Emmeline backed the war; Adela moved to Australia in 1914. Emmeline later joined the Conservative Party.</li>' +
       '<li><b>What historians argue.</b> Whether militancy helped or hurt, and how far the war work of women, the suffragists’ Labour alliance and party politics mattered in 1918.</li>' +
-      '<li><b>Left out.</b> The vote in Britain did not reach the Empire. Even where women could vote, such as New Zealand (1893) and Australia (1902), Aboriginal and Māori women were treated unequally.</li></ul></div></section>' +
+      '<li><b>Left out.</b> The vote in Britain did not reach the Empire. Even where women could vote, race decided who. The Australian Act of 1902 excluded Aboriginal people from the federal roll, with limited exceptions, until 1962; it exempted New Zealand Māori, whose women had the vote from 1893.</li></ul></div></section>' +
       '<section aria-labelledby="oh4"><h3 id="oh4" class="eyebrow">Sources</h3><div class="srcs">' +
-      '<span>UK Parliament Living Heritage: Deeds not words, Cat and Mouse Act. parliament.uk</span>' +
-      '<span>The National Archives: Suffragettes on file; Black Friday (blog.nationalarchives.gov.uk)</span>' +
-      '<span>London Museum: Black Friday; Women’s Sunday; the 1908 “rush” handbill; hunger strikes</span>' +
-      '<span>UK Votes for Women 100 (ukvote100.org): A Rush on the House of Commons, 13 October 1908</span>' +
-      '<span>Surrey History Centre: bomb at Walton-on-the-Hill, 19 February 1913</span>' +
-      '<span>Bow Street Police Museum: the 1912 window-smashing campaign</span>' +
-      '<span>Representation of the People Act 1918 and Equal Franchise Act 1928 (legislation.gov.uk; Wikipedia summaries cross-checked)</span>' +
-      '<span>History Today and Gullickson (Social Research, 2008) on Emily Davison</span>' +
-      '<span>Images: Daily Mirror 19 Nov 1910 front page; photograph in S. Pankhurst, The Suffragette (1911); both public domain via Wikimedia Commons</span></div></section>';
+      '<span><a href="https://www.museumoflondon.org.uk/discover/black-friday" target="_blank" rel="noopener noreferrer">London Museum: How Black Friday changed the Suffragette struggle</a></span>' +
+      '<span><a href="https://londonmuseum.org.uk/collections/v/object-748737/daily-mirror" target="_blank" rel="noopener noreferrer">London Museum: Daily Mirror front page, 19 Nov 1910</a></span>' +
+      '<span><a href="https://collections.museumoflondon.org.uk/online/object/457215.html" target="_blank" rel="noopener noreferrer">London Museum: Leigh and New, first window-breaking, 30 June 1908</a></span>' +
+      '<span><a href="https://www.suffrageresources.org.uk/database/2130/mrs-mary-leigh" target="_blank" rel="noopener noreferrer">Suffrage Resources: Mary Leigh</a></span>' +
+      '<span><a href="https://aph.gov.au/About_Parliament/Parliamentary_departments/Parliamentary_Library/Research/FlagPost/2022/June/Womens_suffrage" target="_blank" rel="noopener noreferrer">Australian Parliament: Franchise Act 1902 and women’s suffrage</a></span>' +
+      '<span><a href="https://www.aec.gov.au/About_AEC/Publications/Fact_Sheets/fact_sheets/fact3.pdf" target="_blank" rel="noopener noreferrer">Australian Electoral Commission fact sheet: 1902 Act</a></span>' +
+      '<span class="muted">Not linked, because I could not verify a live address: UK Parliament Living Heritage; The National Archives; legislation.gov.uk (1918 and 1928 Acts); ukvote100.org; Surrey History Centre; Bow Street Police Museum; History Today and Gullickson on Davison. Search these by name.</span>' +
+      '<span>Images: Daily Mirror 19 Nov 1910 front page; a photograph from S. Pankhurst, The Suffragette (1911). Public domain via Wikimedia Commons.</span></div></section>';
     document.body.appendChild(o);
     app.inert = true; app.setAttribute('aria-hidden', 'true');
     document.getElementById('oclose').addEventListener('click', closeTeacher);
@@ -664,7 +664,8 @@ textarea { width: 100%; margin-top: .3rem; background: var(--panel-2); color: va
   /* ---------- Keyboard ---------- */
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && document.getElementById('overlay')) { e.preventDefault(); closeTeacher(); return; }
-    if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+    var tg = e.target;
+    if (tg && tg !== document.body && tg !== document.documentElement && tg.id !== 'title') return;
     if (S.mode !== 'lesson' || document.getElementById('overlay') || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.key === 'ArrowRight') go(S.idx + 1);
     else if (e.key === 'ArrowLeft') go(S.idx - 1);
