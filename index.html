@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suffragettes Lesson Player</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400..700&family=Public+Sans:wght@400;600&display=swap">
+<style>
+/* Layout idea: a classroom board. Step and countdown on top, one instruction line, one content panel, a timeline at the bottom. */
+:root {
+  --bg: #2a1340;
+  --panel: #3a1b58;
+  --panel-2: #4a2370;
+  --ink: #f6f1e7;
+  --soft: #cdbfe0;
+  --purple: #9a6fd6;
+  --green: #8ed1a4;
+  --line: #5a3680;
+  --font-display: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+  --font-body: 'Public Sans', Arial, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+html { font-size: clamp(15px, 1.1vw, 24px); }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); line-height: 1.45; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+h1, h2, h3, p, ul, ol { margin: 0; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; text-transform: uppercase; line-height: 1.1; font-weight: 600; }
+
+.app { min-height: 100%; display: flex; flex-direction: column; gap: 1.25rem; padding: 1.5rem clamp(16px, 3vw, 56px); max-width: 1920px; margin: 0 auto; }
+
+/* start and done screens */
+.hero { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 1.75rem; }
+.eyebrow { font-weight: 600; letter-spacing: .25em; text-transform: uppercase; color: var(--green); font-size: 1.1rem; }
+.hero h1 { font-size: clamp(3rem, 9vw, 8.5rem); font-weight: 700; }
+.hero .sub { font-size: 1.9rem; color: var(--soft); max-width: 40ch; }
+.stripe { display: flex; width: min(600px, 100%); }
+.stripe i { flex: 1; height: 1.1rem; display: block; }
+.stripe i:nth-child(1) { background: var(--purple); }
+.stripe i:nth-child(2) { background: var(--ink); }
+.stripe i:nth-child(3) { background: var(--green); }
+.btn { border: 2px solid var(--line); background: var(--panel); border-radius: .6rem; padding: .6rem 1.1rem; font-weight: 600; min-height: 2.75rem; }
+.btn:hover { background: var(--panel-2); }
+.btn.primary { background: var(--green); color: #1c0c2e; border-color: var(--green); font-size: 1.7rem; padding: .9rem 2.2rem; font-family: var(--font-display); text-transform: uppercase; letter-spacing: .06em; }
+.btn.primary:hover { background: #a6e0b9; }
+.hero .steps-list { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; color: var(--soft); font-size: 1.15rem; }
+.hero .steps-list b { color: var(--ink); font-weight: 600; }
+
+/* lesson screen */
+.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem 2rem; }
+.step-name { display: flex; flex-direction: column; gap: .35rem; }
+.step-name .eyebrow { font-size: 1rem; }
+.step-name h2 { font-size: clamp(2rem, 4.2vw, 4rem); }
+.timer { display: flex; flex-direction: column; align-items: flex-end; gap: .1rem; }
+.timer .clock { font-family: var(--font-display); font-weight: 700; font-size: clamp(4rem, 9vw, 8rem); line-height: 1; font-variant-numeric: tabular-nums; }
+.timer .clock.low { color: var(--green); }
+.timer .note { color: var(--soft); font-size: 1.1rem; min-height: 1.6em; }
+.instruction { font-size: clamp(1.5rem, 2.6vw, 2.6rem); line-height: 1.25; max-width: 40ch; font-weight: 600; }
+.panel { flex: 1; display: grid; gap: 1.25rem; align-content: start; }
+.cols-2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
+.cols-3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.card { background: var(--panel); border-radius: 1rem; padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: .8rem; }
+.card h3 { font-size: 1.5rem; color: var(--green); }
+.card.a { border-top: .45rem solid var(--purple); }
+.card.b { border-top: .45rem solid var(--green); }
+.card p, .card li { font-size: 1.12rem; line-height: 1.5; }
+.card ul { padding-left: 1.2rem; display: flex; flex-direction: column; gap: .35rem; }
+.card b { color: var(--ink); }
+.big-tile h3 { font-size: 2.2rem; }
+.big-tile p { font-size: 1.5rem; color: var(--soft); }
+.hint { background: var(--ink); color: #2a1340; border-radius: .8rem; padding: .8rem 1.2rem; font-weight: 600; font-size: 1.3rem; }
+
+/* images */
+.img1 { display: flex; flex-direction: column; border-radius: 1rem; overflow: hidden; }
+.img1 div { display: flex; justify-content: space-between; align-items: center; padding: 1.4rem 1.8rem; }
+.img1 strong { font-family: var(--font-display); font-size: 2.6rem; text-transform: uppercase; line-height: 1.1; }
+.img1 span { font-size: 1.3rem; font-weight: 600; }
+.timeline { display: flex; flex-direction: column; gap: .45rem; }
+.timeline div { display: flex; gap: 1rem; align-items: center; background: var(--panel-2); border-radius: .5rem; padding: .5rem .9rem; }
+.timeline b { font-family: var(--font-display); font-size: 1.4rem; width: 3.4rem; }
+.timeline span { font-size: 1.05rem; }
+.chart { display: flex; justify-content: space-around; align-items: flex-end; gap: 1rem; padding-top: .5rem; }
+.chart .col { display: flex; flex-direction: column; align-items: center; gap: .4rem; flex: 1; }
+.chart .val { font-family: var(--font-display); font-size: 2rem; font-weight: 700; line-height: 1; }
+.chart .bar { width: min(5rem, 70%); background: var(--green); border-radius: .25rem .25rem 0 0; }
+.chart .yr { font-weight: 600; font-size: 1.2rem; }
+.chart .cap { color: var(--soft); font-size: 1rem; text-align: center; line-height: 1.3; }
+
+.checklist { list-style: none; padding: 0; display: flex; flex-direction: column; gap: .5rem; }
+.checklist li { display: flex; gap: .75rem; align-items: baseline; font-size: 1.3rem; }
+.checklist li::before { content: ''; width: .9rem; height: .9rem; border: 2px solid var(--green); border-radius: .2rem; flex: none; transform: translateY(.1rem); }
+.rows { display: flex; flex-direction: column; }
+.rows div { display: flex; gap: 1.5rem; padding: .9rem 0; border-top: 1px solid var(--line); align-items: baseline; }
+.rows div:first-child { border-top: 0; }
+.rows b { font-family: var(--font-display); text-transform: uppercase; font-size: 1.5rem; color: var(--green); width: 9rem; flex: none; font-weight: 600; }
+.rows span { font-size: 1.5rem; }
+.pills { display: flex; flex-wrap: wrap; gap: .6rem; }
+.pills span { background: var(--panel-2); border-radius: 2rem; padding: .45rem 1.1rem; font-size: 1.15rem; }
+.question { font-size: clamp(1.8rem, 3.4vw, 3.4rem); font-family: var(--font-display); font-weight: 600; line-height: 1.15; color: var(--green); max-width: 28ch; text-wrap: balance; }
+
+/* controls and timeline */
+.bottom { display: flex; flex-direction: column; gap: .9rem; }
+.track { display: flex; gap: 4px; }
+.seg { background: var(--panel); border-radius: .3rem; overflow: hidden; position: relative; padding: .4rem .6rem .5rem; min-width: 0; }
+.seg .fill { position: absolute; inset: 0 auto 0 0; background: var(--panel-2); width: 0; }
+.seg.done .fill { width: 100%; background: var(--line); }
+.seg span { position: relative; font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; color: var(--soft); }
+.seg.current span { color: var(--ink); font-weight: 600; }
+.controls { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.controls .spacer { flex: 1; }
+.elapsed { color: var(--soft); font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.paused-tag { color: var(--ink); background: var(--purple); border-radius: .4rem; padding: 0 .6rem; font-weight: 600; font-size: 1rem; }
+
+.done-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
+.done-grid ol { padding-left: 1.4rem; display: flex; flex-direction: column; gap: .5rem; font-size: 1.3rem; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .seg .fill { transition: width .4s linear; }
+}
+@media (max-width: 520px) {
+  .rows div { flex-direction: column; gap: .2rem; }
+  .rows b { width: auto; }
+}
+.overlay { position: fixed; inset: 0; background: var(--bg); overflow: auto; z-index: 10; padding: 1.5rem clamp(16px, 3vw, 56px); display: flex; flex-direction: column; gap: 1rem; }
+.overlay .bar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.overlay .bar h2 { font-size: 2rem; }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var CARD_A = '<h3>Card A: parts 1 to 4</h3>' +
+    '<p><b>1 Where and when.</b> Britain. The movement began in Manchester on 10 October 1903 and lasted until 1918.</p>' +
+    '<p><b>2 The problem.</b> In 1900 no woman in Britain could vote in a general election. Parliament made the laws, but women had no say. Many men could not vote either: before 1918 only about 58 per cent of men could.</p>' +
+    '<p><b>3 The goal.</b> The vote for women, on the same terms as men.</p>' +
+    '<p><b>4 The people.</b> Emmeline Pankhurst and her daughters Christabel and Sylvia started the Women’s Social and Political Union (the WSPU). Their motto was “Deeds, not words”, because years of polite campaigning had not worked. Nobody knows exactly how many members it had. Estimates are between 2,000 and 5,000. Another group, the suffragists, led by Millicent Fawcett, campaigned peacefully. They had about 50,000 members by 1914. A newspaper called the WSPU women “suffragettes” to make fun of them. They liked the name and kept it.</p>' +
+    '<p><b>Image 1.</b> The colours of the WSPU: purple for dignity, white for purity, green for hope. Women wore them on sashes, badges and banners so they could recognise each other in a crowd.</p>';
+
+  var CARD_B = '<h3>Card B: parts 5 and 6</h3>' +
+    '<p><b>5 The action.</b> At first the WSPU did what others had done: petitions, meetings and heckling politicians. Nothing changed, so they went further.</p>' +
+    '<ul>' +
+    '<li>1908: they asked the public to rush Parliament. About 60,000 people came and 5,000 police stood in the way.</li>' +
+    '<li>1910, “Black Friday”: 300 women marched on Parliament and were roughly handled by the police.</li>' +
+    '<li>From 1912: they smashed shop windows. Then they set fire to empty buildings, including the house of a government minister, David Lloyd George.</li>' +
+    '<li>Jailed women went on hunger strike and were force-fed. More than 1,000 women went to prison.</li>' +
+    '<li>June 1913: Emily Davison ran in front of the king’s horse at the Derby and died a few days later.</li>' +
+    '<li>1914: the First World War began and the WSPU stopped its campaign.</li>' +
+    '</ul>' +
+    '<p><b>6 The result.</b> In 1914 no woman could vote. In 1918 a new law gave the vote to about 8.4 million women, but only to women over 30 who met a property test. In 1928 all women over 21 could vote, about 15 million, on the same terms as men. Emmeline Pankhurst died only weeks before.</p>' +
+    '<p><b>Images 2 and 3.</b> Image 2 is a timeline of the action. Image 3 is a chart of how many women could vote.</p>';
+
+  var TIMELINE = [
+    ['1903', 'Petitions, meetings, heckling'],
+    ['1908', 'Rush on Parliament: 60,000 people'],
+    ['1910', 'Black Friday: 300 women march'],
+    ['1912', 'Window smashing'],
+    ['1913', 'Arson, hunger strikes, Davison at the Derby'],
+    ['1914', 'War: the campaign stops']
+  ];
+  var BARS = [['0', 0, '1914', 'No vote at all'], ['8.4m', 8.4, '1918', 'Women over 30 with property'], ['15m', 15, '1928', 'All women over 21']];
+
+  function timelineHtml() {
+    return '<div class="card"><h3>Image 2: the action</h3><div class="timeline">' +
+      TIMELINE.map(function (r) { return '<div><b>' + r[0] + '</b><span>' + r[1] + '</span></div>'; }).join('') +
+      '</div></div>';
+  }
+  function chartHtml() {
+    var max = 15, h = 220;
+    return '<div class="card"><h3>Image 3: women with the vote</h3><div class="chart">' +
+      BARS.map(function (b) {
+        var px = Math.max(6, Math.round(b[1] / max * h));
+        return '<div class="col"><span class="val">' + b[0] + '</span><div class="bar" style="height:' + px + 'px"></div><span class="yr">' + b[2] + '</span><span class="cap">' + b[3] + '</span></div>';
+      }).join('') + '</div></div>';
+  }
+  function image1Html() {
+    return '<div class="img1" role="img" aria-label="Three stripes: purple for dignity, white for purity, green for hope">' +
+      '<div style="background:#6b3fa0"><strong>Purple</strong><span>dignity</span></div>' +
+      '<div style="background:#f6f1e7;color:#2a1340"><strong>White</strong><span>purity</span></div>' +
+      '<div style="background:#2f7a4b"><strong>Green</strong><span>hope</span></div></div>';
+  }
+
+  var STEPS = [
+    { id: 'setup', name: 'Set up', secs: 120,
+      instruction: function () { return 'Sit in pairs. One of you is A, one is B. Find your card.'; },
+      panel: function () {
+        return '<div class="panel cols-3">' +
+          '<div class="card a big-tile"><h3>You are A</h3><p>Card A: parts 1 to 4. The start of the story.</p></div>' +
+          '<div class="card b big-tile"><h3>You are B</h3><p>Card B: parts 5 and 6. The action and the result.</p></div>' +
+          '<div class="card big-tile"><h3>Together later</h3><p>Part 7: your opinion. Part 8: a question.</p></div></div>';
+      } },
+    { id: 'read', name: 'Read and keyword', secs: 300,
+      instruction: function () { return 'Read your card. Then make your keyword card: keywords, dates and numbers only.'; },
+      panel: function () {
+        return '<div class="panel cols-2"><div class="card a">' + CARD_A + '</div><div class="card b">' + CARD_B + '</div></div>' +
+          '<div class="hint">No full sentences. Paper only. Turn your card face down before you speak.</div>';
+      } },
+    { id: 'round1', name: 'Round 1: A speaks', secs: 150,
+      instruction: function () { return 'A speaks to B. B ticks parts 1 to 4 on the listening sheet.'; },
+      panel: function () {
+        return '<div class="panel cols-2">' + image1Html() +
+          '<div class="card"><h3>A, cover these</h3><ul class="checklist"><li>1 Where and when</li><li>2 The problem</li><li>3 The goal</li><li>4 The people</li><li>Image 1: what it shows and why it matters</li></ul></div></div>';
+      } },
+    { id: 'round2', name: 'Round 2: B speaks', secs: 150,
+      instruction: function () { return 'B speaks to A. A ticks parts 5 and 6 on the listening sheet.'; },
+      panel: function () {
+        return '<div class="panel cols-3">' + timelineHtml() + chartHtml() +
+          '<div class="card"><h3>B, cover these</h3><ul class="checklist"><li>5 The action</li><li>6 The result</li><li>Images 2 and 3: what each shows and how it links</li></ul></div></div>';
+      } },
+    { id: 'opinion', name: 'Build your opinion', secs: 240,
+      instruction: function () { return 'Together, write your opinion as keywords.'; },
+      panel: function () {
+        return '<div class="panel"><div class="card"><div class="rows">' +
+          '<div><b>Verdict</b><span>Was it a success? Fully, partly or not at all?</span></div>' +
+          '<div><b>Reason one</b><span>Evidence for. What did they achieve? Use a date or a number.</span></div>' +
+          '<div><b>Reason two</b><span>A second piece of evidence. Think about 1918 and 1928.</span></div>' +
+          '<div><b>The limit</b><span>Who or what was left out? Did every method help?</span></div></div></div>' +
+          '<div class="pills"><span>On the one hand… on the other hand…</span><span>Although…</span><span>Historians disagree about…</span></div></div>';
+      } },
+    { id: 'discuss', name: 'Discuss', secs: 240,
+      instruction: function () { return 'Join another pair. Talk about this question.'; },
+      panel: function () {
+        return '<div class="panel"><p class="question">“How far should a group go to change a law it thinks is unfair?”</p>' +
+          '<div class="cols-3 panel" style="margin-top:1rem">' +
+          '<div class="card"><h3>1</h3><p>Everyone speaks once before anyone speaks twice.</p></div>' +
+          '<div class="card"><h3>2</h3><p>Use evidence from your cards or from another movement you know.</p></div>' +
+          '<div class="card"><h3>3</h3><p>Choose one idea to share with the class.</p></div></div></div>';
+      } }
+  ];
+
+  var app = document.getElementById('app');
+  var state = { idx: -1 };
+
+  function startScreen() {
+    app.innerHTML =
+      '<main class="hero">' +
+      '<p class="eyebrow">Small actions, big changes</p>' +
+      '<h1>Deeds, not words</h1>' +
+      '<p class="sub">The suffragettes.</p>' +
+      '<div class="stripe" aria-hidden="true"><i></i><i></i><i></i></div>' +
+      '<p class="steps-list">' + STEPS.map(function (s, i) { return '<span><b>' + (i + 1) + '</b> ' + s.name + '</span>'; }).join('') + '</p>' +
+      '<div><button class="btn primary" id="go">Start</button></div>' +
+      '<p class="sub" style="font-size:1.1rem">Pupils work in pairs. Give each pair a Card A, a Card B and listening sheets, or leave the cards on the board.</p>' +
+      '</main>';
+    document.getElementById('go').addEventListener('click', function () { begin(); });
+    document.getElementById('go').focus();
+  }
+
+  function begin() { state.idx = 0; render(); }
+  function goTo(i) {
+    if (i < 0) i = 0;
+    if (i >= STEPS.length) { state.idx = STEPS.length; render(); return; }
+    state.idx = i; render();
+  }
+
+  function render() {
+    if (state.idx >= STEPS.length) { doneScreen(); return; }
+    var s = STEPS[state.idx];
+    var segs = STEPS.map(function (x, i) {
+      var cls = i < state.idx ? 'seg done' : (i === state.idx ? 'seg current' : 'seg');
+      return '<div class="' + cls + '" style="flex:1 1 0"><div class="fill"></div><span>' + x.name + '</span></div>';
+    }).join('');
+    app.innerHTML =
+      '<header class="top">' +
+        '<div class="step-name"><p class="eyebrow">Step ' + (state.idx + 1) + ' of ' + STEPS.length + '</p><h2>' + s.name + '</h2></div>' +
+      '</header>' +
+      '<p class="instruction" id="instruction" aria-live="polite">' + s.instruction() + '</p>' +
+      s.panel() +
+      '<footer class="bottom">' +
+        '<div class="track" aria-hidden="true">' + segs + '</div>' +
+        '<div class="controls">' +
+          '<button class="btn" id="back">Back</button>' +
+          '<button class="btn" id="next">Next step</button>' +
+          '<button class="btn" id="cards">Cards</button>' +
+          '<button class="btn" id="fs">Full screen</button>' +
+        '</div>' +
+      '</footer>';
+    bind();
+  }
+
+  function bind() {
+    document.getElementById('back').addEventListener('click', function () { goTo(state.idx - 1); });
+    document.getElementById('next').addEventListener('click', function () { goTo(state.idx + 1); });
+    document.getElementById('cards').addEventListener('click', toggleCards);
+    document.getElementById('fs').addEventListener('click', function () {
+      try { var p = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); if (p && p.catch) p.catch(function () {}); } catch (e) { /* not allowed here */ }
+    });
+  }
+  function toggleCards() {
+    var o = document.getElementById('overlay');
+    if (o) { o.remove(); return; }
+    o = document.createElement('div');
+    o.id = 'overlay'; o.className = 'overlay'; o.setAttribute('role', 'dialog'); o.setAttribute('aria-label', 'Reading cards');
+    o.innerHTML = '<div class="bar"><h2>Reading cards</h2><button class="btn" id="closecards">Close</button></div>' +
+      '<div class="panel cols-2"><div class="card a">' + CARD_A + '</div><div class="card b">' + CARD_B + '</div></div>';
+    document.body.appendChild(o);
+    document.getElementById('closecards').addEventListener('click', toggleCards);
+    document.getElementById('closecards').focus();
+  }
+  function doneScreen() {
+    app.innerHTML =
+      '<main class="hero">' +
+      '<p class="eyebrow">Small actions, big changes</p>' +
+      '<h1>Before the bell</h1>' +
+      '<div class="done-grid">' +
+        '<div class="card"><h3>Exit ticket</h3><p style="font-size:1.4rem">On a scrap of paper, write one keyword for each of two parts of the suffragette story. Hand it in.</p></div>' +
+        '<div class="card"><h3>Next lesson: your own</h3><ol>' +
+        '<li>Choose a community effort from anywhere in the world.</li>' +
+        '<li>Alone or in pairs. 45 minutes to research.</li>' +
+        '<li>5 minutes to present. Maximum 3 images, each one explained.</li>' +
+        '<li>Paper notes: keywords, dates, figures.</li>' +
+        '<li>Save images and sources in your OneNote folder.</li>' +
+        '<li>Finish with an open discussion question.</li></ol></div>' +
+      '</div>' +
+      '<div><button class="btn" id="again">Start again</button></div>' +
+      '</main>';
+    document.getElementById('again').addEventListener('click', function () { state.idx = -1; startScreen(); });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+    if (e.key === 'Escape' && document.getElementById('overlay')) { toggleCards(); return; }
+    if (state.idx < 0 || state.idx >= STEPS.length) return;
+    if (document.getElementById('overlay')) return;
+    if (e.key === 'ArrowRight') goTo(state.idx + 1);
+    else if (e.key === 'ArrowLeft') goTo(state.idx - 1);
+  });
+
+  startScreen();
+})();
+</script>
+</body>
+</html>
